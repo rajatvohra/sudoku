@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import simpledialog
 from tkinter import messagebox
-
+from digitrecognizer import arr as ar
 
 rows,cols =(9,9)
 arr = [[0 for i in range(cols)] for j in range(rows)] 
@@ -18,6 +18,7 @@ arr=[[3,0,6,5,0,8,4,0,0],
     [1,3,0,0,0,0,2,5,0], 
     [0,0,0,0,0,0,0,7,4], 
     [0,0,5,2,0,6,3,0,0]] 
+arr=ar
 
 count=0
 def take_input():
