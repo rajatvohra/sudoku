@@ -1,35 +1,20 @@
 from tkinter import *
-from tkinter.ttk import *
+import tkinter.ttk  as ttk
 from tkinter import simpledialog
 from tkinter import messagebox
-from digitrecognizer import arr as ar
+from digit_recognizer import arr as ar
+from solvability_test import isValidConfig 
 
 rows,cols =(9,9)
 arr = [[0 for i in range(cols)] for j in range(rows)] 
 brr = [[0 for i in range(cols)] for j in range(rows)] 
 crr = [[0 for i in range(cols)] for j in range(rows)] 
 
-arr=[[3,0,6,5,0,8,4,0,0], 
-    [5,2,0,0,0,0,0,0,0], 
-    [0,8,7,0,0,0,0,3,1], 
-    [0,0,3,0,1,0,0,8,0], 
-    [9,0,0,8,6,3,0,0,5], 
-    [0,5,0,0,9,0,6,0,0], 
-    [1,3,0,0,0,0,2,5,0], 
-    [0,0,0,0,0,0,0,7,4], 
-    [0,0,5,2,0,6,3,0,0]] 
 arr=ar
 
 count=0
-def take_input():
-    for x in range(9):
-        for y in range(9):
-            arr[x][y]=0
-def print_output():
-    for x in range(9):
-        for y in range(9):
-            print(arr[x][y],end=' ')
-        print()
+
+
 def safe_to_place(arr,row,col,i):
     for x in range(9):
         if(arr[x][col] == i or arr[row][x] == i ):
@@ -86,7 +71,7 @@ def solve_with_steps():
                 wo=IntVar()
                 wo.set(num)
                 w=wo.get()
-                l=Label(my_frame,anchor='w', text=str(w),font=("Helvetica", 16),borderwidth=100, relief="solid",justify=LEFT, background="Green")
+                l=Button(my_frame,text=str(w),font=("Helvetica", 16),relief="solid",background="green")
                 l.config(width=2)
                 l.grid(row=x,column=y)
                 
@@ -98,7 +83,7 @@ def solve_with_steps():
                 wo=IntVar()
                 wo.set(0)
                 w=" "     
-                l=Label(my_frame,anchor='w', text=str(w),font=("Helvetica", 16),borderwidth=100, relief="solid",justify=LEFT,background="red")
+                l=Button(my_frame,text=str(w),font=("Helvetica", 16), relief="solid",background="red")
                 l.config(width=2)
                 l.grid(row=x,column=y)
                 root.after(40,root.update())                            
@@ -116,17 +101,17 @@ def update():
             
             if(w==0):
                 w="  "
-                l=Button(my_frame, text=str(w),command=lambda row=r,column =t :check_if(row,column))
+                l=Button(my_frame,text=str(w),font=("Helvetica", 16), relief="solid",command=lambda row=r,column =t :check_if(row,column))
                 l.config(width=2)
                 l.grid(row=r,column=t)
             else:
 
-                l=Label(my_frame,anchor='w', text=str(w),font=("Helvetica", 16),borderwidth=100, relief="solid",justify=LEFT,background="White")
+                l=Button(my_frame,text=str(w),font=("Helvetica", 16),relief="solid",command=lambda row=r,column =t :wrong_input(row,column))
                 l.config(width=2)
                 l.grid(row=r,column=t)            
-def dod():
-    status.set("this button is not working rn")
-
+def under_work():
+    status.set("OOPS,this button is under construction right now")
+    status_bar.config(borderwidth=3,background="black",foreground="white")
 def copy():
     for x in range(9):
         for y in range(9):
@@ -140,7 +125,17 @@ def reset():
         for y in range(9):
             arr[x][y]=brr[x][y]
     update()
-
+def copy_to_b():
+    for x in range(9):
+        for y in range(9):
+            brr[x][y]=arr[x][y]   
+def validity_check():
+    if(isValidConfig(arr,9)==True):
+        status.set("this is a Valid configuration")
+        status_bar.config(borderwidth=3,background="green",foreground="black")
+    else:
+        status.set("this is a Invalid configuration")
+        status_bar.config(borderwidth=3,background="red",foreground="black")
 def check_if(r, c):
     q = simpledialog.askinteger("input","please input an integer between 1 and 9 both inclusive")
     if(crr[r][c]==q):
@@ -161,14 +156,16 @@ def check_if(r, c):
     else:
         count=0
         status.set("Incorrect,come on have 1 more try")
-        status_bar.config(borderwidth=3,background="red",foreground="white")
-
-        
-
+        status_bar.config(borderwidth=3,background="red",foreground="white")        
+def wrong_input(r, c):
+    q = simpledialog.askinteger("input","please input an integer between 1 and 9 both inclusive")
+    global count 
+    arr[r][c]=q
+    update()
 
 
 root=Tk()
-root.geometry('300x300')
+root.geometry('430x430')
 my_frame=Frame(root,borderwidth=2,width=500,height=500)
 
 
@@ -185,22 +182,28 @@ menu.add_cascade(label="solve",menu =submenu)
 submenu.add_command(label="with steps",command=solve_with_steps)
 submenu.add_command(label="without steps",command=solve_final)
 
-menu.add_command(label="high score",command =dod)
+menu.add_command(label="high score",command =under_work)
 
 
 menu.add_command(label="reset screen",command =reset)
 
+menu.add_command(label="set as og",command =copy_to_b)
+
+
+
+menu.add_command(label="check validity",command =validity_check)
+
 save=Menu(menu)
 menu.add_cascade(label="save/logout",menu =save)
-save.add_command(label="save",command=dod)
-save.add_command(label="logout",command=dod)
-save.add_command(label="logout and exit",command=dod)
+save.add_command(label="save",command=under_work)
+save.add_command(label="logout",command=under_work)
+save.add_command(label="logout and exit",command=under_work)
 
 ####### Status Bar###########
 status=StringVar()
 status.set("hi, I am your status bar")
 
-status_bar= Label(root, textvariable  =status,relief=SUNKEN)
+status_bar= ttk.Label(root, textvariable  =status,relief=SUNKEN)
 status_bar.config(pad=10,borderwidth=3,background="blue",foreground="white")
 status_bar.pack(side=BOTTOM,fill=X)
 
@@ -214,6 +217,4 @@ reset()
 update()
 
 my_frame.pack()
-    
-
 root.mainloop()
