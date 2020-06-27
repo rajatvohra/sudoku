@@ -11,9 +11,8 @@ rows=9
 cols=9
 arr = [[0 for i in range(cols)] for j in range(rows)]
 
-
-
 image =cv2.imread(r"C:\Users\rajat vohra\Documents\python_2020\comp_vision\images\ab.png",1)
+
 
 #cv2.imshow("a",image)
 
@@ -57,10 +56,20 @@ try:
 except: 
     pass
 cv2.imwrite(r"C:\Users\rajat vohra\Documents\python_2020\comp_vision\images\new.jpg",output)
-output=cv2.bitwise_not(output)
+(thresh, out) = cv2.threshold(output, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+output=cv2.bitwise_not(out)
 #cv2.imshow("output",output)
 #a=np.float32(X.iloc[0])
 #a=np.reshape(a,(28,28))
+
+lines=[40*i for i in range(10)]
+for line in lines:
+    pt1 = (line,0)
+    pt2 = (line,360)
+    pt3=(0,line)
+    pt4=(360,line)
+    cv2.line(output, pt1, pt2, (0,0,0), 2)
+    cv2.line(output, pt3, pt4, (0,0,0), 2)
 
 
 for i in range(0,360,40):
@@ -72,12 +81,12 @@ for i in range(0,360,40):
             for m in range(28):
                 if(a[l,m]==0):
                     count=count+1
-        if(count!=576):
+        
+        if(count<700):
             a=a.reshape(1,-1)
             x=clf.predict(a)
             x=int(x)
             arr[int(i/40)][int(j/40)]=x
-
 
 
         
